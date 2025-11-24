@@ -1,0 +1,7 @@
+.idea/
+mypy_cache/
+__pycache__/
+*.egg-info/
+build/
+.vscode/
+.pytest_cache
