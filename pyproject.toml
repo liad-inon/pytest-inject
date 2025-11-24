@@ -5,12 +5,23 @@ build-backend = "hatchling.build"
 [project]
 name = "pytest-inject"
 version = "0.1.0"
+description = "A pytest plugin that allows you to inject arguments into fixtures and parametrized tests using pytest command-line options."
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "liad-inon" },
+]
 classifiers = [
     "Framework :: Pytest",
+    "License :: OSI Approved :: MIT License",
 ]
 dependencies = [
     "pytest>=6.0.0",
 ]
+
+[project.urls]
+Repository = "https://github.com/liad-inon/pytest-inject/"
+Homepage = "https://github.com/liad-inon/pytest-inject/"
 
 [project.entry-points.pytest11]
 pytest_inject = "pytest_inject.plugin"
