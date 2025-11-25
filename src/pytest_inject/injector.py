@@ -45,9 +45,8 @@ def inject_test_arguments(
                 test_metafunc,
             )
 
-            marker_args_names = _get_parameterize_arg_names(marker)
-            for injection_name in marker_args_names:
-                left_injections.pop(injection_name, None)
+            for injected_argument in marker_injected_args.keys():
+                del left_injections[injected_argument]
 
     injections_left_in_test = {
         argument_name: value for argument_name, value in left_injections.items()
