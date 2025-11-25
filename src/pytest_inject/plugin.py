@@ -53,9 +53,9 @@ def pytest_generate_tests(metafunc):
 
     injected_args = {}
     if injection_json_raw_input:
-        injected_args = resolve_json_input(injection_json_raw_input)
+        injected_args = _resolve_json_input(injection_json_raw_input)
     elif injection_dict_raw_input:
-        injected_args = resolve_python_dict_input(injection_dict_raw_input)
+        injected_args = _resolve_python_dict_input(injection_dict_raw_input)
 
     inject_test_arguments(
         metafunc,
@@ -65,7 +65,7 @@ def pytest_generate_tests(metafunc):
 
 
 @lru_cache(maxsize=1)
-def resolve_json_input(raw_input: str) -> Dict[str, Any]:
+def _resolve_json_input(raw_input: str) -> Dict[str, Any]:
     """
         Parses JSON input (file path or raw string) into a dictionary.
     """
@@ -88,7 +88,7 @@ def resolve_json_input(raw_input: str) -> Dict[str, Any]:
 
 
 @lru_cache(maxsize=1)
-def resolve_python_dict_input(path: str) -> Dict[str, Any]:  # type: ignore
+def _resolve_python_dict_input(path: str) -> Dict[str, Any]:  # type: ignore
     """
     Loads a dict from a python file.
     Can load either a variable or a getter function/callable to get the dict from.

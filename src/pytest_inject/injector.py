@@ -37,7 +37,7 @@ def inject_test_arguments(
             test_metafunc,
         )
 
-        marker_args_names = get_parameterize_arg_names(marker)
+        marker_args_names = _get_parameterize_arg_names(marker)
         for injection_name in marker_args_names:
             left_injections.pop(injection_name, None)
 
@@ -64,7 +64,7 @@ def _injected_parameterized_marker(
         the injected arguments overriding existing ones, deleting duplicates
         if needed, removing the old marker, and adding the new.
     """
-    marker_arg_names = get_parameterize_arg_names(marker)
+    marker_arg_names = _get_parameterize_arg_names(marker)
     injections_in_marker = {
         injected_argument: injected_value for injected_argument, injected_value in injected_args.items()
         if injected_argument in marker_arg_names
@@ -169,7 +169,7 @@ def _adjust_indirect_arg_for_injection(
         return False
 
 
-def get_parameterize_arg_names(parameterize_marker: Mark):
+def _get_parameterize_arg_names(parameterize_marker: Mark):
     """
         Helper to extract argument names from a parametrize marker.
         Handles both @pytest.mark.parametrize("a,b", ...) and (["a","b"], ...)
