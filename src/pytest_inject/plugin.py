@@ -18,28 +18,21 @@ def pytest_addoption(parser):
         action="store",
         dest="inject_json",
         default=None,
-        help="A file path or raw JSON string used to override "
-             "test fixtures and parametrization arguments."
+        help=INJECT_JSON_HELP_STRING
     )
     group.addoption(
         "--inject-dict",
         action="store",
         dest="inject_dict",
         default=None,
-        help="A path to a python dictionary or callable (format: 'path/module.py::attribute') "
-             "used to override test fixtures and parametrization arguments."
+        help=INJECT_DICT_HELP_STRING
     )
     group.addoption(
         "--inject-allow-dup",
         action="store_true",
         dest="inject_allow_dup",
         default=None,
-        help="By default, pytest-inject automatically removes duplicate "
-             "parameter sets created by the injection. This process also "
-             "re-indexes the parameter sets and removes their IDs. Use this "
-             "flag to disable this behavior if you want to preserve the original "
-             "parameter set indexes and IDs, or if you specifically need the "
-             "duplicate test cases resulting from the injection."
+        help=INJECT_ALLOW_DUPS_HELP_STRING
     )
 
 
