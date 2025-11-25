@@ -97,8 +97,6 @@ def _injected_parameterized_marker(
         )
 
         # If duplicates were removed, reset the ids to None to avoid mismatches.
-        # Because if duplicates were removed, the existing ids no longer
-        # correspond correctly to the parameter sets, both in count and in meaning.
         duplicates_were_removed = len(new_marker_arg_values) < len(old_marker_arg_values)
         if duplicates_were_removed:
             new_marker_ids_arg = None
