@@ -7,6 +7,9 @@ from typing import Any, Dict
 from pytest_inject.exceptions import PytestInjectError
 from pytest_inject.injector import inject_test_arguments
 
+# Magic constants
+PYTHON_FILE_TO_DICT_TARGET_SEPERATOR = "::"
+
 
 def pytest_addoption(parser):
     group = parser.getgroup("inject")
@@ -32,7 +35,7 @@ def pytest_addoption(parser):
         action="store",
         dest="inject_dict",
         default=None,
-        help="A Python path to a dictionary or callable (format: 'path/module.py:attribute') "
+        help="A Python path to a dictionary or callable (format: 'path/module.py::attribute') "
              "used to override test fixtures and parametrization arguments."
     )
 
@@ -93,10 +96,10 @@ def _resolve_python_dict_input(path: str) -> Dict[str, Any]:  # type: ignore
     Loads a dict from a python file.
     Can load either a variable or a getter function/callable to get the dict from.
 
-    Format: "path/to/file.py:variable_or_function"
+    Format: "path/to/file.py::variable_or_function"
     """
-    if ":" in path:
-        file_path, target_name = path.rsplit(":", 1)
+    if PYTHON_FILE_TO_DICT_TARGET_SEPERATOR in path:
+        file_path, target_name = path.rsplit(PYTHON_FILE_TO_DICT_TARGET_SEPERATOR, 1)
     else:
         raise PytestInjectError(f"pytest-inject: No target specified in python input '{path}'.")
 

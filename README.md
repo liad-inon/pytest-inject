@@ -34,7 +34,7 @@ pip install pytest-inject
 
   Allows you to inject arguments using a Python dictionary defined in a file, or a callable that returns a dictionary. This is useful for injecting complex objects that cannot be represented in JSON.
 
-  **Format:** `path/to/file.py:variable_or_function`
+  **Format:** `path/to/file.py::variable_or_function`
 
   **Example `injection_data.py`:**
   ```python
@@ -47,10 +47,10 @@ pip install pytest-inject
   **Usage:**
   ```bash
   # Use a variable
-  pytest --inject-dict injection_data.py:data_dict
+  pytest --inject-dict injection_data.py::data_dict
 
   # Use a function
-  pytest --inject-dict injection_data.py:get_data
+  pytest --inject-dict injection_data.py::get_data
   ```
 
 - **`--inject-allow-dup`**
