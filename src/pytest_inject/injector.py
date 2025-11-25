@@ -1,4 +1,4 @@
-from typing import Any, Union, List, Dict, Optional
+from typing import Any, Union, List, Dict, Optional, Generator
 
 from _pytest.mark import Mark
 from _pytest.python import Metafunc
@@ -19,12 +19,12 @@ def inject_test_arguments(
     Injects arguments into the test function represented by test_metafunc,
     overriding existing parameterize markers arguments if needed, and adding
     new parameterization for non-parameterized injected arguments.
-    Removes duplicated parameter sets on any parameterize marker with at least
-    one argument injection, unless allow_arg_values_duplication is set to True.
+    Removes duplicated parameter sets when duplication was not present before
+    injection, unless allow_arg_values_duplication is set to True.
 
     :param test_metafunc: The pytest Metafunc object of the injected test.
-    :param allow_arg_values_duplication: Whether to allow duplicated parameter sets
-            after injection.
+    :param allow_arg_values_duplication: if True disable filtering of duplicated parameter
+            sets, that were caused by injection.
     :param injected_args: A dictionary of argument names and their injected values.
     """
     left_injections = injected_args.copy()
@@ -61,8 +61,9 @@ def _injected_parameterized_marker(
 ):
     """
         Injects arguments into a parameterize marker, by recreating it with
-        the injected arguments overriding existing ones, deleting duplicates
-        if needed, removing the old marker, and adding the new.
+        the injected arguments overriding existing ones, deleting injection
+        caused duplicates if needed, removing the old marker, and replacing
+        with the new.
     """
     marker_arg_names = _get_parameterize_arg_names(marker)
     injections_in_marker = {
@@ -90,10 +91,12 @@ def _injected_parameterized_marker(
     new_marker_arg_values = injected_arg_values
 
     if not allow_arg_values_duplication:
-        injected_arg_values_no_duplicates = [
-            arg_value for index, arg_value in enumerate(injected_arg_values)
-            if arg_value not in injected_arg_values[:index]
-        ]
+        injected_arg_values_no_duplicates = list(
+            _remove_injection_caused_duplicates_from_injected_arg_values(
+                old_marker_arg_values,
+                injected_arg_values
+            )
+        )
         new_marker_arg_values = injected_arg_values_no_duplicates
 
         # If duplicates were removed, reset the ids to None to avoid mismatches.
@@ -169,6 +172,33 @@ def _adjust_indirect_arg_for_injection(
         return False
 
 
+def _remove_injection_caused_duplicates_from_injected_arg_values(
+        none_injected_arg_values: List[Any],
+        injected_arg_values: List[Any],
+) -> Generator[Any, Any, None]:
+    """
+        Removes parameter sets from injected_arg_values that are duplicates
+        caused by the injection process, i.e. parameter sets that are duplicates
+        in injected_arg_values, but not in none_injected_arg_values.
+    """
+    for arg_set_index, injected_set in enumerate(injected_arg_values):
+        is_duplicate = _element_is_duplicated_in_list(
+            arg_set_index,
+            injected_arg_values
+        )
+
+        if is_duplicate:
+            is_not_injection_caused_duplicate = _element_is_duplicated_in_list(
+                arg_set_index,
+                none_injected_arg_values
+            )
+
+            if is_not_injection_caused_duplicate:
+                yield injected_set
+        else:
+            yield injected_set
+
+
 def _get_parameterize_arg_names(parameterize_marker: Mark):
     """
         Helper to extract argument names from a parametrize marker.
@@ -181,6 +211,22 @@ def _get_parameterize_arg_names(parameterize_marker: Mark):
         return list(arg_names)
 
     return []
+
+
+def _element_is_duplicated_in_list(
+        element_index: int,
+        elements_list: List[Any],
+) -> bool:
+    """
+        Helper to check if an element has more than one occurrence in a list.
+    """
+    element_checked = elements_list[element_index]
+
+    return any(
+        element_checked == other_element
+        for other_element_index, other_element in enumerate(elements_list)
+        if element_index != other_element_index
+    )
 
 
 def _replace_parameterize_marker(

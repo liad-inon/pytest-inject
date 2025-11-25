@@ -26,9 +26,12 @@ def pytest_addoption(parser):
         action="store_true",
         dest="inject_allow_dup",
         default=None,
-        help="Disable automatic deduplication of parameterized test cases. "
-             "By default, duplicate parameter sets on markers effected by injection, "
-             "are filtered to remove duplicates."
+        help="By default, pytest-inject automatically removes duplicate "
+             "parameter sets created by the injection. This process also "
+             "re-indexes the parameter sets and removes their IDs. Use this "
+             "flag to disable this behavior if you want to preserve the original "
+             "parameter set indexes and IDs, or if you specifically need the "
+             "duplicate test cases resulting from the injection."
     )
     group.addoption(
         "--inject-dict",
