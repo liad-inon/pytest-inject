@@ -101,6 +101,11 @@ To run the project's own tests after installing for development, execute pytest 
 pytest tests/
 ```
 
+Or if you are using `hatch`:
+```bash
+hatch test
+```
+
 ## License
 
 This project is licensed under the MIT License.
