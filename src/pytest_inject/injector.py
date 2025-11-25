@@ -16,16 +16,16 @@ def inject_test_arguments(
         allow_arg_values_duplication=False,
 ):
     """
-    Injects arguments into the test function represented by test_metafunc,
-    overriding existing parameterize markers arguments if needed, and adding
-    new parameterization for non-parameterized injected arguments.
-    Removes duplicated parameter sets when duplication was not present before
-    injection, unless allow_arg_values_duplication is set to True.
+        Injects arguments into the test function represented by test_metafunc,
+        overriding existing parameterize markers arguments if needed, and adding
+        new parameterization for non-parameterized injected arguments.
+        Removes duplicated parameter sets when duplication was not present before
+        injection, unless allow_arg_values_duplication is set to True.
 
-    :param test_metafunc: The pytest Metafunc object of the injected test.
-    :param allow_arg_values_duplication: if True disable filtering of duplicated parameter
-            sets, that were caused by injection.
-    :param injected_args: A dictionary of argument names and their injected values.
+        :param test_metafunc: The pytest Metafunc object of the injected test.
+        :param allow_arg_values_duplication: if True disable filtering of duplicated parameter
+                sets, that were caused by injection.
+        :param injected_args: A dictionary of argument names and their injected values.
     """
     left_injections = injected_args.copy()
 
