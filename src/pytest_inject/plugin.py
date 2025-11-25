@@ -5,6 +5,7 @@ from functools import lru_cache
 from typing import Any, Dict
 
 from pytest_inject.exceptions import PytestInjectError
+from pytest_inject.help_strings import INJECT_JSON_HELP_STRING, INJECT_DICT_HELP_STRING, INJECT_ALLOW_DUPS_HELP_STRING
 from pytest_inject.injector import inject_test_arguments
 
 # Magic constants
@@ -66,11 +67,11 @@ def pytest_generate_tests(metafunc):
 @lru_cache(maxsize=1)
 def _resolve_json_input(raw_input: str) -> Dict[str, Any]:
     """
-        Parses JSON input (file path or raw string) into a dictionary.
+    Parses JSON input (file path or raw string) into a dictionary.
     """
     if os.path.isfile(raw_input):
         try:
-            with open(raw_input, 'r') as file:
+            with open(raw_input) as file:
                 return json.load(file)
         except Exception as exception:
             raise PytestInjectError(
@@ -81,8 +82,8 @@ def _resolve_json_input(raw_input: str) -> Dict[str, Any]:
             return json.loads(raw_input)
         except json.JSONDecodeError as exception:
             raise PytestInjectError(
-                f"pytest-inject: Invalid JSON input, or a none existent "
-                f"file path that is parsed as JSON."
+                "pytest-inject: Invalid JSON input, or a none existent "
+                "file path that is parsed as JSON."
             ) from exception
 
 

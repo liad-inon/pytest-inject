@@ -1,4 +1,4 @@
-from typing import Any, Union, List, Dict, Optional, Generator
+from typing import Any, Dict, Generator, List, Optional, Union
 
 from _pytest.mark import Mark
 from _pytest.python import Metafunc
@@ -16,16 +16,16 @@ def inject_test_arguments(
         allow_arg_values_duplication=False,
 ):
     """
-        Injects arguments into the test function represented by test_metafunc,
-        overriding existing parameterize markers arguments if needed, and adding
-        new parameterization for non-parameterized injected arguments.
-        Removes duplicated parameter sets when duplication was not present before
-        injection, unless allow_arg_values_duplication is set to True.
+    Injects arguments into the test function represented by test_metafunc,
+    overriding existing parameterize markers arguments if needed, and adding
+    new parameterization for non-parameterized injected arguments.
+    Removes duplicated parameter sets when duplication was not present before
+    injection, unless allow_arg_values_duplication is set to True.
 
-        :param test_metafunc: The pytest Metafunc object of the injected test.
-        :param allow_arg_values_duplication: if True disable filtering of duplicated parameter
-                sets, that were caused by injection.
-        :param injected_args: A dictionary of argument names and their injected values.
+    :param test_metafunc: The pytest Metafunc object of the injected test.
+    :param allow_arg_values_duplication: if True disable filtering of duplicated parameter
+            sets, that were caused by injection.
+    :param injected_args: A dictionary of argument names and their injected values.
     """
     left_injections = injected_args.copy()
 
@@ -69,10 +69,10 @@ def _injected_parameterized_marker(
         test_metafunc: Metafunc,
 ):
     """
-        Injects arguments into a parameterize marker, by recreating it with
-        the injected arguments overriding existing ones, deleting injection
-        caused duplicates if needed, removing the old marker, and replacing
-        with the new.
+    Injects arguments into a parameterize marker, by recreating it with
+    the injected arguments overriding existing ones, deleting injection
+    caused duplicates if needed, removing the old marker, and replacing
+    with the new.
     """
     old_marker_arg_values = marker.args[ARG_VALUES_INDEX]
     new_marker_arg_values = _inject_arg_values(
@@ -122,8 +122,8 @@ def _inject_arg_values(
         injections: Dict[str, Any],
 ) -> List[Any]:
     """
-        Injects the given injections into the argument values list, returning
-        a new list with the injected values.
+    Injects the given injections into the argument values list, returning
+    a new list with the injected values.
     """
     arg_values_injected = []
 
@@ -134,14 +134,14 @@ def _inject_arg_values(
             for arg_index in range(len(arguments_values_set)):
                 arg_name = arg_names[arg_index]
 
-                if arg_name in injections.keys():
+                if arg_name in injections:
                     arg_values_set_injected[arg_index] = injections[arg_name]
 
             arg_values_injected.append(arg_values_set_injected)
         else:
             arg_name = arg_names[0]
 
-            if arg_name in injections.keys():
+            if arg_name in injections:
                 arg_values_injected.append(injections[arg_name])
 
     return arg_values_injected
@@ -153,14 +153,14 @@ def _adjust_marker_indirect_arg_for_injection(
         injections_in_marker: Dict[str, Any]
 ) -> Union[bool, List[str]]:
     """
-        returns a changed value of a given parameterize marker indirect argument,
-        so it will not include any injected arguments. By that making sure injected
-        arguments are not indirectly parameterized.
+    returns a changed value of a given parameterize marker indirect argument,
+    so it will not include any injected arguments. By that making sure injected
+    arguments are not indirectly parameterized.
     """
     if old_indirect is True:
         return [
             arg_name for arg_name in arg_names
-            if arg_name not in injections_in_marker.keys()
+            if arg_name not in injections_in_marker
         ]
     elif isinstance(old_indirect, (list, tuple)):
         return [
@@ -176,9 +176,9 @@ def _remove_injection_caused_duplicates_from_injected_arg_values(
         injected_arg_values: List[Any],
 ) -> Generator[Any, Any, None]:
     """
-        Removes parameter sets from injected_arg_values that are duplicates
-        caused by the injection process, i.e. parameter sets that are duplicates
-        in injected_arg_values, but not in none_injected_arg_values.
+    Removes parameter sets from injected_arg_values that are duplicates
+    caused by the injection process, i.e. parameter sets that are duplicates
+    in injected_arg_values, but not in none_injected_arg_values.
     """
     for arg_set_index, injected_set in enumerate(injected_arg_values):
         is_duplicate = _element_is_duplicated_in_list(
@@ -200,8 +200,8 @@ def _remove_injection_caused_duplicates_from_injected_arg_values(
 
 def _get_parameterize_arg_names(parameterize_marker: Mark):
     """
-        Helper to extract argument names from a parametrize marker.
-        Handles both @pytest.mark.parametrize("a,b", ...) and (["a","b"], ...).
+    Helper to extract argument names from a parametrize marker.
+    Handles both @pytest.mark.parametrize("a,b", ...) and (["a","b"], ...).
     """
     arg_names = parameterize_marker.args[ARG_NAMES_INDEX]
     if isinstance(arg_names, str):
@@ -217,7 +217,7 @@ def _element_is_duplicated_in_list(
         elements_list: List[Any],
 ) -> bool:
     """
-        Helper to check if an element has more than one occurrence in a list.
+    Helper to check if an element has more than one occurrence in a list.
     """
     element_checked = elements_list[element_index]
 
@@ -238,8 +238,8 @@ def _replace_parameterize_marker(
         replacement_index: int,
 ):
     """
-        replaces an existing parameterize marker in the test_metafunc with a new one
-        created from the given arguments.
+    replaces an existing parameterize marker in the test_metafunc with a new one
+    created from the given arguments.
     """
     test_metafunc.parametrize(
         COMMA_CHAR.join(marker_arg_names),

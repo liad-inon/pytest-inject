@@ -1,11 +1,10 @@
 """
-    The tests here are test designed to fail with their current
-    parameters and fixtures. To make them pass, the outer plugin
-    tests should inject appropriate parameters, that will make them pass,
-    and by that validate that the injection mechanism is working.
+The tests here are test designed to fail with their current
+parameters and fixtures. To make them pass, the outer plugin
+tests should inject appropriate parameters, that will make them pass,
+and by that validate that the injection mechanism is working.
 """
 import pytest
-
 from argument_values import INJECTED, NOT_EFFECTED
 
 
@@ -29,7 +28,7 @@ def test_inject_1_string_parameterize(
         injected_string_parameter: str,
 ):
     """
-        Inject "injected_string_parameter"="injected" to make this test pass.
+    Inject "injected_string_parameter"="injected" to make this test pass.
     """
     assert injected_string_parameter == INJECTED
 
@@ -38,7 +37,7 @@ def test_inject_1_string_fixture(
         injected_string_fixture: str,
 ):
     """
-        Inject "injected_string_fixture"="injected" to make this test pass.
+    Inject "injected_string_fixture"="injected" to make this test pass.
     """
     assert injected_string_fixture == INJECTED
 
@@ -55,9 +54,9 @@ def test_inject_and_override_indirect_for_indirect_true_while_not_effecting_othe
         other_indirect_arg: str,
 ):
     """
-        Inject "injected_string_fixture"="injected" to make this test pass, while not effecting
-        other_indirect_arg, which needs to stay indirect to pass.
-        Check that when injecting on indirect=True, none injected indirect arguments are not effected.
+    Inject "injected_string_fixture"="injected" to make this test pass, while not effecting
+    other_indirect_arg, which needs to stay indirect to pass.
+    Check that when injecting on indirect=True, none injected indirect arguments are not effected.
     """
     assert injected_indirect_arg == INJECTED
     assert other_indirect_arg == NOT_EFFECTED
@@ -75,10 +74,10 @@ def test_inject_and_override_indirect_for_indirect_equal_list_with_all_test_argu
         other_indirect_arg: str,
 ):
     """
-        Inject "injected_string_fixture"="injected" to make this test pass, while not effecting
-        other_indirect_arg, which needs to stay indirect to pass.
-        Check that when injecting on indirect=["injected_indirect_arg", "other_indirect_arg"],
-        none injected indirect arguments are not effected.
+    Inject "injected_string_fixture"="injected" to make this test pass, while not effecting
+    other_indirect_arg, which needs to stay indirect to pass.
+    Check that when injecting on indirect=["injected_indirect_arg", "other_indirect_arg"],
+    none injected indirect arguments are not effected.
     """
     assert injected_indirect_arg == INJECTED
     assert other_indirect_arg == NOT_EFFECTED
@@ -94,9 +93,9 @@ def test_inject_and_override_indirect_for_indirect_equal_list_with_all_test_argu
 )
 def test_general_duplication_deletion(a, b, c):
     """
-        Injection target for tests checking parameterize arguments set duplication deletion.
+    Injection target for tests checking parameterize arguments set
+    duplication deletion.
     """
-    pass
 
 
 @pytest.mark.parametrize(
@@ -109,6 +108,6 @@ def test_general_duplication_deletion(a, b, c):
 )
 def test_parameter_set_duplication_preservation(a, b, c):
     """
-        Injection target for tests checking original parameterize arguments set duplication preservation.
+    Injection target for tests checking original parameterize arguments set
+    duplication preservation.
     """
-    pass

@@ -1,8 +1,8 @@
 """
-    Tests here are injecting arguments into the tests defined
-    in the "tests_injected" directory. These injected arguments are designed
-    to make the injected tests pass. If the injected test failed, it means
-    that the injection mechanism is not working as expected.
+Tests here are injecting arguments into the tests defined
+in the "tests_injected" directory. These injected arguments are designed
+to make the injected tests pass. If the injected test failed, it means
+that the injection mechanism is not working as expected.
 """
 
 import json
@@ -10,7 +10,6 @@ from os import path
 from pathlib import Path
 
 import pytest
-
 from pytest_session_reporter import PytestSessionReporter
 from tests_injected.argument_values import INJECTED
 
@@ -28,8 +27,8 @@ TEST_PASSED_CODE = 0
 
 def test_inject_1_string_parameterize():
     """
-        inject "injected_string_parameter"="injected" to make this test pass.
-        Check that injection works with parameterized tests.
+    inject "injected_string_parameter"="injected" to make this test pass.
+    Check that injection works with parameterized tests.
     """
     exit_code = pytest.main(
         [
@@ -46,8 +45,8 @@ def test_inject_1_string_parameterize():
 
 def test_inject_1_string_fixture():
     """
-        Inject "injected_string_fixture"="injected" to make this test pass.
-        Check that injection works with fixtures.
+    Inject "injected_string_fixture"="injected" to make this test pass.
+    Check that injection works with fixtures.
     """
     exit_code = pytest.main(
         [
@@ -64,11 +63,10 @@ def test_inject_1_string_fixture():
 
 def test_inject_and_override_indirect_for_indirect_true_while_not_effecting_other_indirect_arguments():
     """
-        inject "injected_indirect_arg"="injected", while not effecting
-        other_indirect_arg, which needs to stay indirect to pass the test.
-
-        check that when injecting on indirect=True, none injected indirect
-        arguments are not effected.
+    inject "injected_indirect_arg"="injected", while not effecting
+    other_indirect_arg, which needs to stay indirect to pass the test.
+    check that when injecting on indirect=True, none injected indirect
+    arguments are not effected.
     """
     exit_code = pytest.main(
         [
@@ -85,10 +83,10 @@ def test_inject_and_override_indirect_for_indirect_true_while_not_effecting_othe
 
 def test_inject_and_override_indirect_for_indirect_equal_list_with_all_test_arguments():
     """
-        Inject "injected_string_fixture"="injected" to make this test pass, while not effecting
-        other_indirect_arg, which needs to stay indirect to pass.
-        Check that when injecting on indirect=["injected_indirect_arg", "other_indirect_arg"],
-        none injected indirect arguments are not effected.
+    Inject "injected_string_fixture"="injected" to make this test pass, while not effecting
+    other_indirect_arg, which needs to stay indirect to pass.
+    Check that when injecting on indirect=["injected_indirect_arg", "other_indirect_arg"],
+    none injected indirect arguments are not effected.
     """
     exit_code = pytest.main(
         [
@@ -105,12 +103,12 @@ def test_inject_and_override_indirect_for_indirect_equal_list_with_all_test_argu
 
 def test_parameterize_arguments_set_injection_caused_duplication_deletion():
     """
-        Checking deletion of duplicated parameterize argument sets caused by
-        injection.
-        The test is preformed by overriding all injected test arguments, and
-        verifying that the injected test was only run and collected one time.
-        The injected test has 3 different parameter sets, so by overriding all
-        arguments, all 3 sets become identical, and only one should be kept.
+    Checking deletion of duplicated parameterize argument sets caused by
+    injection.
+    The test is preformed by overriding all injected test arguments, and
+    verifying that the injected test was only run and collected one time.
+    The injected test has 3 different parameter sets, so by overriding all
+    arguments, all 3 sets become identical, and only one should be kept.
     """
     injected_session_reporter = PytestSessionReporter()
 
@@ -130,10 +128,10 @@ def test_parameterize_arguments_set_injection_caused_duplication_deletion():
 
 def test_parameterize_arguments_set_duplication_deletion_disabling():
     """
-        Checking deletion of duplicated parameterize argument sets
-        caused by injection not activating when --inject-allow-dup is used.
-        The test is preformed by overriding all injected test arguments, and verifying that
-        the injected test was only run and collected for each currently existing parameter set (3).
+    Checking deletion of duplicated parameterize argument sets
+    caused by injection not activating when --inject-allow-dup is used.
+    The test is preformed by overriding all injected test arguments, and verifying that
+    the injected test was only run and collected for each currently existing parameter set (3).
     """
     injected_session_reporter = PytestSessionReporter()
 
@@ -154,12 +152,12 @@ def test_parameterize_arguments_set_duplication_deletion_disabling():
 
 def test_parameterize_arguments_set_original_duplication_preservation():
     """
-        Checking preservation of duplicated parameterize argument sets not
-        caused by injection.
-        The test is preformed by overriding all injected test arguments, and
-        verifying that although all sets are duplicated, the duplication is preserved
-        as it was not caused by injection. The injected test has 3 identical
-        parameter sets, so it should be collected 3 times.
+    Checking preservation of duplicated parameterize argument sets not
+    caused by injection.
+    The test is preformed by overriding all injected test arguments, and
+    verifying that although all sets are duplicated, the duplication is preserved
+    as it was not caused by injection. The injected test has 3 identical
+    parameter sets, so it should be collected 3 times.
     """
     injected_session_reporter = PytestSessionReporter()
 
@@ -179,9 +177,9 @@ def test_parameterize_arguments_set_original_duplication_preservation():
 
 def test_inject_using_json_string():
     """
-        Inject "injected_string_parameter"="injected" to make this test pass.
-        Use JSON string as input.
-        Check that injection works with JSON strings.
+    Inject "injected_string_parameter"="injected" to make this test pass.
+    Use JSON string as input.
+    Check that injection works with JSON strings.
     """
     exit_code = pytest.main(
         [
@@ -198,9 +196,9 @@ def test_inject_using_json_string():
 
 def test_inject_using_json_file_path():
     """
-        Inject "injected_string_parameter"="injected" to make this test pass.
-        Use JSON file path as input.
-        Check that injection works with JSON file paths.
+    Inject "injected_string_parameter"="injected" to make this test pass.
+    Use JSON file path as input.
+    Check that injection works with JSON file paths.
     """
     exit_code = pytest.main(
         [
@@ -217,9 +215,9 @@ def test_inject_using_json_file_path():
 
 def test_inject_using_python_dict_attribute():
     """
-        Inject "injected_string_parameter"="injected" to make this test pass.
-        Use Python dict from file target path.
-        Check that injection works with Python dict.
+    Inject "injected_string_parameter"="injected" to make this test pass.
+    Use Python dict from file target path.
+    Check that injection works with Python dict.
     """
     exit_code = pytest.main(
         [
@@ -236,9 +234,9 @@ def test_inject_using_python_dict_attribute():
 
 def test_inject_using_python_dict_getter_function():
     """
-        Inject "injected_string_parameter"="injected" to make this test pass.
-        Use Python dict getter function from file target.
-        Check that injection works with Python dict getter function.
+    Inject "injected_string_parameter"="injected" to make this test pass.
+    Use Python dict getter function from file target.
+    Check that injection works with Python dict getter function.
     """
     exit_code = pytest.main(
         [
