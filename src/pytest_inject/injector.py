@@ -152,9 +152,8 @@ def _adjust_indirect_arg_for_injection(
         injections_in_marker: Dict[str, Any]
 ) -> Union[bool, List[str]]:
     """
-        returns an adjusts the 'indirect' argument of a parameterize marker
-        that will not affect injected arguments, while keeping other indirect
-        arguments indirect.
+        returns change value of a given parameterize marker indirect argument,
+        so it will not include any injected arguments.
     """
     if old_indirect is True:
         return [
