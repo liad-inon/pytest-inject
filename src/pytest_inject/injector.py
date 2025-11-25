@@ -30,32 +30,41 @@ def inject_test_arguments(
     left_injections = injected_args.copy()
 
     for marker in test_metafunc.definition.iter_markers(PARAMETERIZE_MARKER_TAG):
-        _injected_parameterized_marker(
-            marker,
-            injected_args,
-            allow_arg_values_duplication,
-            test_metafunc,
-        )
+        marker_arg_names = _get_parameterize_arg_names(marker)
+        marker_injected_args = {
+            arg_name: injected_value for arg_name, injected_value in injected_args.items()
+            if arg_name in marker_arg_names
+        }
 
-        marker_args_names = _get_parameterize_arg_names(marker)
-        for injection_name in marker_args_names:
-            left_injections.pop(injection_name, None)
+        if marker_injected_args:
+            _injected_parameterized_marker(
+                marker,
+                marker_arg_names,
+                marker_injected_args,
+                allow_arg_values_duplication,
+                test_metafunc,
+            )
 
-    relevant_left_injunctions = {
+            marker_args_names = _get_parameterize_arg_names(marker)
+            for injection_name in marker_args_names:
+                left_injections.pop(injection_name, None)
+
+    injections_left_in_test = {
         argument_name: value for argument_name, value in left_injections.items()
         if argument_name in test_metafunc.fixturenames
     }
 
-    if relevant_left_injunctions:
+    if injections_left_in_test:
         test_metafunc.parametrize(
-            list(relevant_left_injunctions.keys()),
-            [tuple(relevant_left_injunctions.values())],
+            tuple(injections_left_in_test.keys()),
+            [tuple(injections_left_in_test.values())],
         )
 
 
 def _injected_parameterized_marker(
         marker: Mark,
-        injected_args: Dict[str, Any],
+        marker_arg_names: List[str],
+        marker_injected_args: Dict[str, Any],
         allow_arg_values_duplication: bool,
         test_metafunc: Metafunc,
 ):
@@ -65,44 +74,33 @@ def _injected_parameterized_marker(
         caused duplicates if needed, removing the old marker, and replacing
         with the new.
     """
-    marker_arg_names = _get_parameterize_arg_names(marker)
-    injections_in_marker = {
-        injected_argument: injected_value for injected_argument, injected_value in injected_args.items()
-        if injected_argument in marker_arg_names
-    }
-
-    if not injections_in_marker:
-        return
-
     old_marker_arg_values = marker.args[ARG_VALUES_INDEX]
-    injected_arg_values = _inject_arg_values(
+    new_marker_arg_values = _inject_arg_values(
         old_marker_arg_values,
         marker_arg_names,
-        injections_in_marker,
+        marker_injected_args
     )
 
-    new_marker_indirect_arg = _adjust_indirect_arg_for_injection(
+    new_marker_indirect_arg = _adjust_marker_indirect_arg_for_injection(
         marker.kwargs.get("indirect", False),
         marker_arg_names,
-        injections_in_marker
+        marker_injected_args
     )
 
     new_marker_ids_arg = marker.kwargs.get("ids", None)
-    new_marker_arg_values = injected_arg_values
 
     if not allow_arg_values_duplication:
-        injected_arg_values_no_duplicates = list(
+        new_marker_arg_values = list(
             _remove_injection_caused_duplicates_from_injected_arg_values(
                 old_marker_arg_values,
-                injected_arg_values
+                new_marker_arg_values
             )
         )
-        new_marker_arg_values = injected_arg_values_no_duplicates
 
         # If duplicates were removed, reset the ids to None to avoid mismatches.
         # Because if duplicates were removed, the existing ids no longer
         # correspond correctly to the parameter sets, both in count and in meaning.
-        duplicates_were_removed = len(injected_arg_values_no_duplicates) < len(injected_arg_values)
+        duplicates_were_removed = len(new_marker_arg_values) < len(old_marker_arg_values)
         if duplicates_were_removed:
             new_marker_ids_arg = None
 
@@ -149,14 +147,15 @@ def _inject_arg_values(
     return arg_values_injected
 
 
-def _adjust_indirect_arg_for_injection(
+def _adjust_marker_indirect_arg_for_injection(
         old_indirect: Union[bool, List[str]],
         arg_names: List[str],
         injections_in_marker: Dict[str, Any]
 ) -> Union[bool, List[str]]:
     """
-        returns change value of a given parameterize marker indirect argument,
-        so it will not include any injected arguments.
+        returns a changed value of a given parameterize marker indirect argument,
+        so it will not include any injected arguments. By that making sure injected
+        arguments are not indirectly parameterized.
     """
     if old_indirect is True:
         return [
@@ -202,7 +201,7 @@ def _remove_injection_caused_duplicates_from_injected_arg_values(
 def _get_parameterize_arg_names(parameterize_marker: Mark):
     """
         Helper to extract argument names from a parametrize marker.
-        Handles both @pytest.mark.parametrize("a,b", ...) and (["a","b"], ...)
+        Handles both @pytest.mark.parametrize("a,b", ...) and (["a","b"], ...).
     """
     arg_names = parameterize_marker.args[ARG_NAMES_INDEX]
     if isinstance(arg_names, str):

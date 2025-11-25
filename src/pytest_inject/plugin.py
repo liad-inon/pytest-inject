@@ -8,7 +8,7 @@ from pytest_inject.exceptions import PytestInjectError
 from pytest_inject.injector import inject_test_arguments
 
 # Magic constants
-PYTHON_FILE_TO_DICT_TARGET_SEPERATOR = "::"
+INJECT_DICT_INPUT_FILE_TO_ATTRIBUTE_SEPERATOR = "::"
 
 
 def pytest_addoption(parser):
@@ -22,6 +22,14 @@ def pytest_addoption(parser):
              "test fixtures and parametrization arguments."
     )
     group.addoption(
+        "--inject-dict",
+        action="store",
+        dest="inject_dict",
+        default=None,
+        help="A path to a python dictionary or callable (format: 'path/module.py::attribute') "
+             "used to override test fixtures and parametrization arguments."
+    )
+    group.addoption(
         "--inject-allow-dup",
         action="store_true",
         dest="inject_allow_dup",
@@ -32,14 +40,6 @@ def pytest_addoption(parser):
              "flag to disable this behavior if you want to preserve the original "
              "parameter set indexes and IDs, or if you specifically need the "
              "duplicate test cases resulting from the injection."
-    )
-    group.addoption(
-        "--inject-dict",
-        action="store",
-        dest="inject_dict",
-        default=None,
-        help="A Python path to a dictionary or callable (format: 'path/module.py::attribute') "
-             "used to override test fixtures and parametrization arguments."
     )
 
 
@@ -101,8 +101,8 @@ def _resolve_python_dict_input(path: str) -> Dict[str, Any]:  # type: ignore
 
     Format: "path/to/file.py::variable_or_function"
     """
-    if PYTHON_FILE_TO_DICT_TARGET_SEPERATOR in path:
-        file_path, target_name = path.rsplit(PYTHON_FILE_TO_DICT_TARGET_SEPERATOR, 1)
+    if INJECT_DICT_INPUT_FILE_TO_ATTRIBUTE_SEPERATOR in path:
+        file_path, target_name = path.rsplit(INJECT_DICT_INPUT_FILE_TO_ATTRIBUTE_SEPERATOR, 1)
     else:
         raise PytestInjectError(f"pytest-inject: No target specified in python input '{path}'.")
 
