@@ -9,11 +9,20 @@ description = "A pytest plugin that allows you to inject arguments into fixtures
 readme = "README.md"
 license = "MIT"
 authors = [
-    { name = "liad-inon" },
+    { name = "Liad Inon" },
 ]
+requires-python = ">=3.8"
 classifiers = [
     "Framework :: Pytest",
     "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
     "pytest>=6.0.0",
@@ -25,3 +34,12 @@ Homepage = "https://github.com/liad-inon/pytest-inject/"
 
 [project.entry-points.pytest11]
 pytest_inject = "pytest_inject.plugin"
+
+[tool.hatch.envs.default]
+python = "3.8"
+
+[tool.hatch.envs.hatch-test]
+default-args = ["tests"]
+
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
