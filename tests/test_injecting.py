@@ -103,12 +103,14 @@ def test_inject_and_override_indirect_for_indirect_equal_list_with_all_test_argu
     assert exit_code == TEST_PASSED_CODE
 
 
-def test_parameterize_arguments_set_duplication_deletion():
+def test_parameterize_arguments_set_injection_caused_duplication_deletion():
     """
         Checking deletion of duplicated parameterize argument sets caused by
         injection.
         The test is preformed by overriding all injected test arguments, and
         verifying that the injected test was only run and collected one time.
+        The injected test has 3 different parameter sets, so by overriding all
+        arguments, all 3 sets become identical, and only one should be kept.
     """
     injected_session_reporter = PytestSessionReporter()
 
@@ -143,6 +145,31 @@ def test_parameterize_arguments_set_duplication_deletion_disabling():
             "--inject-json",
             json.dumps({"a": INJECTED, "b": INJECTED, "c": INJECTED}),
             "--inject-allow-dup"
+        ],
+        [injected_session_reporter]
+    )
+
+    assert injected_session_reporter.tests_collected == 3
+
+
+def test_parameterize_arguments_set_original_duplication_preservation():
+    """
+        Checking preservation of duplicated parameterize argument sets not
+        caused by injection.
+        The test is preformed by overriding all injected test arguments, and
+        verifying that although all sets are duplicated, the duplication is preserved
+        as it was not caused by injection. The injected test has 3 identical
+        parameter sets, so it should be collected 3 times.
+    """
+    injected_session_reporter = PytestSessionReporter()
+
+    pytest.main(
+        [
+            INJECTED_TESTS_DIR,
+            "-k",
+            "test_parameter_set_duplication_preservation",
+            "--inject-json",
+            json.dumps({"a": INJECTED, "b": INJECTED, "c": INJECTED})
         ],
         [injected_session_reporter]
     )

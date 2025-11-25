@@ -97,3 +97,18 @@ def test_general_duplication_deletion(a, b, c):
         Injection target for tests checking parameterize arguments set duplication deletion.
     """
     pass
+
+
+@pytest.mark.parametrize(
+    "a,b,c",
+    [
+        (1, 2, 3),
+        (1, 2, 3),
+        (1, 2, 3)
+    ]
+)
+def test_parameter_set_duplication_preservation(a, b, c):
+    """
+        Injection target for tests checking original parameterize arguments set duplication preservation.
+    """
+    pass
